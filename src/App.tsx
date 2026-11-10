@@ -1,11 +1,10 @@
-import cards from './data/cards.json';
+import { useState } from 'react';
+import type { GameState } from './engine';
+import { DeckSetup } from './ui/DeckSetup';
+import { GameScreen } from './ui/GameScreen';
+import './ui/styles.css';
 
-// 画面はステップ2で作る。今はカードデータが読めていることだけ表示する。
 export default function App() {
-  return (
-    <main style={{ padding: 24, fontFamily: 'sans-serif' }}>
-      <h1>PTCGi</h1>
-      <p>ルールエンジンを開発中です。カードデータ: {cards.length}枚</p>
-    </main>
-  );
+  const [game, setGame] = useState<GameState | null>(null);
+  return game ? <GameScreen initial={game} onExit={() => setGame(null)} /> : <DeckSetup onStart={setGame} />;
 }

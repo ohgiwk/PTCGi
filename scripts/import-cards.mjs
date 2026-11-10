@@ -89,7 +89,7 @@ const cards = raw.map((c) => {
   }
   return {
     ...base,
-    energyType: 'Special',
+    energyType: c.energy_type === 'Normal' || /^基本.エネルギー$/.test(c.name) ? 'Basic' : 'Special',
     provides: energyProvides(c),
     effect: c.effect ?? '',
   };
