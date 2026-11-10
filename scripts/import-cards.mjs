@@ -95,6 +95,18 @@ const cards = raw.map((c) => {
   };
 });
 
+// 進化元が抜けているカードがあるので、同じ名前の別のカードから補う。
+const evolveFromByName = {};
+for (const c of cards) if (c.category === 'pokemon' && c.evolveFrom) evolveFromByName[c.name] = c.evolveFrom;
+let filled = 0;
+for (const c of cards) {
+  if (c.category === 'pokemon' && c.stage !== 'Basic' && !c.evolveFrom && evolveFromByName[c.name]) {
+    c.evolveFrom = evolveFromByName[c.name];
+    filled++;
+  }
+}
+console.log(`filled evolveFrom for ${filled} cards`);
+
 // 基本エネルギーは TCGdex のデータに入っていないので、ここで足す。
 const BASIC = [
   ['Grass', '草'], ['Fire', '炎'], ['Water', '水'], ['Lightning', '雷'], ['Psychic', '超'],

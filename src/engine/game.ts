@@ -316,6 +316,20 @@ export class Game {
     else pl.bench = pl.bench.filter((s) => s.id !== slot.id);
   }
 
+  /** 場のポケモンを、ついているカードごと山札にもどす (切るのは呼び出し側)。 */
+  returnSlotToDeck(slot: PokemonSlot): void {
+    const { owner, isActive } = this.findSlot(slot.id);
+    const pl = this.player(owner);
+    for (const uid of [...slot.stack, ...slot.energies, ...slot.tools]) pl.deck.push(uid);
+    if (isActive) pl.active = null;
+    else pl.bench = pl.bench.filter((s) => s.id !== slot.id);
+  }
+
+  /** 山札の上から n 枚 (見るだけ)。 */
+  topOfDeck(p: PlayerId, n: number): string[] {
+    return this.player(p).deck.slice(0, n);
+  }
+
   // ---------- ダメージ・回復・特殊状態 ----------
 
   /** ダメカンをのせる (弱点・抵抗力などは計算しない)。 */

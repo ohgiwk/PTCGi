@@ -66,17 +66,22 @@ export interface Layout {
 /**
  * 盤面を直接組み立てたゲームを作る。準備は終わっていて、turn 番目の番の最初 (ドロー後) になる。
  */
-export function build(layout: [Layout, Layout], opts: { turn?: number; current?: PlayerId } = {}): GameState {
+export function build(
+  layout: [Layout, Layout],
+  opts: { turn?: number; current?: PlayerId; db?: CardDB; filler?: string } = {},
+): GameState {
+  const cardDb = opts.db ?? db;
+  const filler = opts.filler ?? 'E-L';
   const decks: [string[], string[]] = [[], []];
   for (const p of [0, 1] as PlayerId[]) {
     const l = layout[p];
     const listed = [l.active, ...(l.bench ?? []), ...(l.hand ?? []), ...(l.deck ?? [])];
     const size = Math.max(listed.length + (l.prizes ?? 6), l.deckSize ?? 30);
     decks[p] = [...listed];
-    while (decks[p].length < size) decks[p].push('E-L');
+    while (decks[p].length < size) decks[p].push(filler);
   }
-  const state = createGame(db, decks, { seed: 1, firstPlayer: 0 });
-  const g = new Game(state, db);
+  const state = createGame(cardDb, decks, { seed: 1, firstPlayer: 0 });
+  const g = new Game(state, cardDb);
   for (const p of [0, 1] as PlayerId[]) {
     const pl = state.players[p];
     // いったん全部山札にもどして、IDの順にならべ直す。
